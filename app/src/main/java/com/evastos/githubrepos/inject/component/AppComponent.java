@@ -8,7 +8,7 @@ package com.evastos.githubrepos.inject.component;
 import com.evastos.githubrepos.inject.module.AppModule;
 import com.evastos.githubrepos.inject.module.GitHubModule;
 import com.evastos.githubrepos.inject.module.NetworkModule;
-import com.evastos.githubrepos.ui.SearchFragment;
+import com.evastos.githubrepos.ui.search.SearchFragment;
 
 import javax.inject.Singleton;
 

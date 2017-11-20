@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package com.evastos.githubrepos.ui;
+package com.evastos.githubrepos.ui.search;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,13 +13,22 @@ import android.view.MenuItem;
 
 import com.evastos.githubrepos.R;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 public class SearchActivity extends AppCompatActivity {
+
+    @BindView(R.id.activity_search_toolbar)
+    Toolbar toolbar;
+
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_search_toolbar);
+        unbinder = ButterKnife.bind(this);
         setSupportActionBar(toolbar);
     }
 
@@ -36,5 +45,11 @@ public class SearchActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 }

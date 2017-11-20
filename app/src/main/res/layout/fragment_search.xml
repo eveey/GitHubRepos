@@ -1,11 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:showIn="@layout/activity_search"
-    tools:context="com.evastos.githubrepos.ui.SearchFragment">
+    tools:context="com.evastos.githubrepos.ui.search.SearchFragment"
+    tools:showIn="@layout/activity_search">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.SearchView
+            android:id="@+id/fragment_search_search_view_repositories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/fragment_search_text_view_repositories_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingBottom="@dimen/spacing1x"
+            android:paddingEnd="@dimen/spacing2x"
+            android:paddingStart="@dimen/spacing2x"
+            android:paddingTop="@dimen/spacing1x"
+            android:visibility="invisible"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_search_search_view"
+            tools:text="Showing search results for GodzillaGodzilla Godzilla GodzillaGodzilla"
+            tools:visibility="visible" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/fragment_search_recycler_view_repositories"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:scrollbars="vertical"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+
+        <include layout="@layout/progress_bar_horizontal" />
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

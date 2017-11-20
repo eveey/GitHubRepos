@@ -1,2 +1,5 @@
 <menu xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.evastos.githubrepos.ui.SearchActivity"></menu>
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.evastos.githubrepos.ui.search.SearchActivity">
+</menu>
