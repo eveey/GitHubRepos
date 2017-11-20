@@ -1,2 +1,2 @@
 <menu xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.evastos.githubrepos.SearchActivity"></menu>
+    tools:context="com.evastos.githubrepos.ui.SearchActivity"></menu>

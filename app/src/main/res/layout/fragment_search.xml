@@ -6,6 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:showIn="@layout/activity_search"
-    tools:context="com.evastos.githubrepos.SearchFragment">
+    tools:context="com.evastos.githubrepos.ui.SearchFragment">
 
 </android.support.constraint.ConstraintLayout>
