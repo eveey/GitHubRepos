@@ -1,5 +1,36 @@
-<menu xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.evastos.githubrepos.ui.search.SearchActivity">
+
+    <item
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="Sort by"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/menu_item_sort_best_match"
+                android:title="Best match" />
+            <item
+                android:id="@+id/menu_item_sort_stars_asc"
+                android:title="Stars ASC" />
+            <item
+                android:id="@+id/menu_item_sort_stars_desc"
+                android:title="Stars DESC" />
+
+            <item
+                android:id="@+id/menu_item_sort_forks_asc"
+                android:title="Forks ASC" />
+            <item
+                android:id="@+id/menu_item_sort_forks_desc"
+                android:title="Forks DESC" />
+
+            <item
+                android:id="@+id/menu_item_sort_updated_asc"
+                android:title="Updated ASC" />
+            <item
+                android:id="@+id/menu_item_sort_updated_desc"
+                android:title="Updated DESC" />
+        </menu>
+    </item>
 </menu>
