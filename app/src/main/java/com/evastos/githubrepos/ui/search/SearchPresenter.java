@@ -170,7 +170,8 @@ class SearchPresenter implements SearchContract.Presenter {
             repositories = new ArrayList<>();
         }
         view.showProgress();
-        final Disposable disposable = gitHubService.searchRepositories(searchQuery,
+        final Disposable disposable = gitHubService.searchRepositories(
+                searchQuery,
                 sortBy.getSorting(),
                 sortBy.getOrdering(),
                 page,
@@ -180,20 +181,17 @@ class SearchPresenter implements SearchContract.Presenter {
                 .subscribe(new Consumer<RepositoriesResponse>() {
                                @Override
                                public void accept(RepositoriesResponse repositoriesResponse) throws Exception {
-                                   view.hideProgress();
-                                   view.showResultsTitle(searchQuery, sortBy.toString());
-                                   for (com.evastos.githubrepos.data.model.response.Repository repo : repositoriesResponse.getItems()) {
-                                       Repository repository = new Repository(repo);
-                                       repositories.add(repository);
+                                   if (repositoriesResponse != null && repositoriesResponse.getItems() != null) {
+                                       onSuccess(repositoriesResponse.getItems(), searchQuery);
+                                   } else {
+                                       onError();
                                    }
-                                   view.showRepositories(repositories);
                                }
                            },
                         new Consumer<Throwable>() {
                             @Override
                             public void accept(Throwable throwable) throws Exception {
-                                view.hideProgress();
-                                view.showError(SearchPresenter.this);
+                                onError();
                             }
                         });
         disposables.add(disposable);
@@ -202,5 +200,20 @@ class SearchPresenter implements SearchContract.Presenter {
     @Override
     public void onErrorRefreshClicked() {
         searchRepositories();
+    }
+
+    private void onSuccess(@NonNull final List<com.evastos.githubrepos.data.model.response.Repository> data,
+                           @NonNull final String searchQuery) {
+        view.hideProgress();
+        view.showResultsTitle(searchQuery, sortBy.toString());
+        for (com.evastos.githubrepos.data.model.response.Repository repositoryItem : data) {
+            repositories.add(new Repository(repositoryItem));
+        }
+        view.showRepositories(repositories);
+    }
+
+    private void onError() {
+        view.hideProgress();
+        view.showError(this);
     }
 }
