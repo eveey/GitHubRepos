@@ -5,32 +5,30 @@
 
     <item
         android:icon="@android:drawable/ic_menu_sort_by_size"
-        android:title="Sort by"
+        android:title="@string/menu_title_sort_by"
         app:showAsAction="always">
         <menu>
             <item
                 android:id="@+id/menu_item_sort_best_match"
-                android:title="Best match" />
+                android:title="@string/menu_item_title_sort_by_best_match" />
             <item
                 android:id="@+id/menu_item_sort_stars_asc"
-                android:title="Stars ASC" />
+                android:title="@string/menu_item_title_sort_by_stars_asc" />
             <item
                 android:id="@+id/menu_item_sort_stars_desc"
-                android:title="Stars DESC" />
-
+                android:title="@string/menu_item_title_sort_by_stars_desc" />
             <item
                 android:id="@+id/menu_item_sort_forks_asc"
-                android:title="Forks ASC" />
+                android:title="@string/menu_item_title_sort_by_forks_asc" />
             <item
                 android:id="@+id/menu_item_sort_forks_desc"
-                android:title="Forks DESC" />
-
+                android:title="@string/menu_item_title_sort_by_forks_desc" />
             <item
                 android:id="@+id/menu_item_sort_updated_asc"
-                android:title="Updated ASC" />
+                android:title="@string/menu_item_title_sort_by_updated_asc" />
             <item
                 android:id="@+id/menu_item_sort_updated_desc"
-                android:title="Updated DESC" />
+                android:title="@string/menu_item_title_sort_by_updated_desc" />
         </menu>
     </item>
 </menu>

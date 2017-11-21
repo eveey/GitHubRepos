@@ -1,7 +1,16 @@
 <resources>
     <string name="app_name">GitHubRepos</string>
-    <string name="search_results_format">Showing search results for \"%s\"</string>
+    <string name="search_results_format">Showing search results for \"%s\", sorted by %s</string>
 
     <string name="error_message">Oops, something went wrong…</string>
     <string name="error_button_refresh">Refresh</string>
+
+    <string name="menu_title_sort_by">Sort by</string>
+    <string name="menu_item_title_sort_by_best_match">Best match</string>
+    <string name="menu_item_title_sort_by_stars_asc">Stars ASC</string>
+    <string name="menu_item_title_sort_by_stars_desc">Stars DESC</string>
+    <string name="menu_item_title_sort_by_forks_asc">Forks ASC</string>
+    <string name="menu_item_title_sort_by_forks_desc">Forks DESC</string>
+    <string name="menu_item_title_sort_by_updated_asc">Updated ASC</string>
+    <string name="menu_item_title_sort_by_updated_desc">Updated DESC</string>
 </resources>

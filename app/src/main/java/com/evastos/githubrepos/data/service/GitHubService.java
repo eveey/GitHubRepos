@@ -22,10 +22,6 @@ import retrofit2.http.Query;
  */
 public interface GitHubService {
 
-    @GET("search/repositories")
-    Single<RepositoriesResponse> searchRepositories(@Query("q") @NonNull @Size(min = 1) String searchQuery,
-                                                    @Query("page") @IntRange(from = 1) int page,
-                                                    @Query("per_page") @IntRange(from = 1) int perPage);
 
     @GET("search/repositories")
     Single<RepositoriesResponse> searchRepositories(@Query("q") @NonNull @Size(min = 1) String searchQuery,

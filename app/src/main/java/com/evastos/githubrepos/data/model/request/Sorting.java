@@ -12,10 +12,13 @@ import java.util.Locale;
  */
 public enum Sorting {
 
-    STARS, FORKS, UPDATED;
+    STARS, FORKS, UPDATED, NONE;
 
     @Override
     public String toString() {
+        if (this == NONE) {
+            return null;
+        }
         return name().toLowerCase(Locale.US);
     }
 }
