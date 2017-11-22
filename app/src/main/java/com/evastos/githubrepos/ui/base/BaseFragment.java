@@ -24,14 +24,14 @@ public abstract class BaseFragment extends Fragment implements BaseView {
         if (view == null) {
             return;
         }
-        errorSnackbar = Snackbar.make(getView(), getString(R.string.error_message), Snackbar.LENGTH_INDEFINITE)
-                .setAction(getString(R.string.error_button_refresh),
-                        new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                errorViewListener.onErrorRefreshClicked();
-                            }
-                        });
+        errorSnackbar = Snackbar.make(getView(), getString(R.string.error_message), Snackbar.LENGTH_INDEFINITE);
+        errorSnackbar.setAction(getString(R.string.error_button_refresh),
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        errorViewListener.onErrorRefreshClicked();
+                    }
+                });
         errorSnackbar.show();
     }
 

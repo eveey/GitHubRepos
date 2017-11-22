@@ -36,7 +36,7 @@ class SearchPresenter implements SearchContract.Presenter {
 
     private static final int FIRST_PAGE = 1;
 
-    private static final int REPOSITORIES_PER_PAGE = 2;
+    private static final int REPOSITORIES_PER_PAGE = 50;
 
     @NonNull
     private final GitHubService gitHubService;
@@ -49,7 +49,13 @@ class SearchPresenter implements SearchContract.Presenter {
 
     private int page = FIRST_PAGE;
 
+    private int totalItemCount;
+
     private final CompositeDisposable disposables = new CompositeDisposable();
+
+    private boolean isLoading = false;
+
+    private boolean shouldLoadMore = false;
 
     @NonNull
     private List<Repository> repositories = new ArrayList<>();
@@ -111,65 +117,86 @@ class SearchPresenter implements SearchContract.Presenter {
         this.searchQuery = searchQuery;
         view.clearSearchFocus();
         sortBy = SortBy.BEST_MATCH;
+        page = FIRST_PAGE;
         searchRepositories();
     }
 
     @Override
     public void onSortByBestMatch() {
         sortBy = SortBy.BEST_MATCH;
-        searchRepositories();
-    }
-
-    @Override
-    public void onSortByStarsAsc() {
-        sortBy = SortBy.STARS_ASC;
+        page = FIRST_PAGE;
         searchRepositories();
     }
 
     @Override
     public void onSortByStarsDesc() {
         sortBy = SortBy.STARS_DESC;
+        page = FIRST_PAGE;
         searchRepositories();
     }
 
     @Override
-    public void onSortByForksAsc() {
-        sortBy = SortBy.FORKS_ASC;
+    public void onSortByStarsAsc() {
+        sortBy = SortBy.STARS_ASC;
+        page = FIRST_PAGE;
         searchRepositories();
     }
 
     @Override
     public void onSortByForksDesc() {
         sortBy = SortBy.FORKS_DESC;
+        page = FIRST_PAGE;
         searchRepositories();
     }
 
     @Override
-    public void onSortByUpdatedAsc() {
-        sortBy = SortBy.UPDATED_ASC;
+    public void onSortByForksAsc() {
+        sortBy = SortBy.FORKS_ASC;
+        page = FIRST_PAGE;
         searchRepositories();
     }
 
     @Override
     public void onSortByUpdatedDesc() {
         sortBy = SortBy.UPDATED_DESC;
+        page = FIRST_PAGE;
+        searchRepositories();
+    }
+
+    @Override
+    public void onSortByUpdatedAsc() {
+        sortBy = SortBy.UPDATED_ASC;
+        page = FIRST_PAGE;
         searchRepositories();
     }
 
     @Override
     public void onLoadNextPage() {
+        if (!shouldLoadMore || isLoading) {
+            return;
+        }
+        view.showLoadingMore();
         page++;
         searchRepositories();
+    }
+
+    @Override
+    public boolean isLoading() {
+        return isLoading;
+    }
+
+    @Override
+    public void onRepositoryClick(@NonNull Repository repository) {
+        // todo: open detail screen
     }
 
     private void searchRepositories() {
         if (searchQuery == null) {
             return;
         }
-        if (page == FIRST_PAGE) {
-            repositories = new ArrayList<>();
-        }
+        view.hideError();
         view.showProgress();
+        isLoading = true;
         final Disposable disposable = gitHubService.searchRepositories(
                 searchQuery,
                 sortBy.getSorting(),
@@ -182,6 +209,7 @@ class SearchPresenter implements SearchContract.Presenter {
                                @Override
                                public void accept(RepositoriesResponse repositoriesResponse) throws Exception {
                                    if (repositoriesResponse != null && repositoriesResponse.getItems() != null) {
+                                       totalItemCount = repositoriesResponse.getTotalCount();
                                        onSuccess(repositoriesResponse.getItems(), searchQuery);
                                    } else {
                                        onError();
@@ -204,15 +232,36 @@ class SearchPresenter implements SearchContract.Presenter {
 
     private void onSuccess(@NonNull final List<com.evastos.githubrepos.data.model.response.Repository> data,
                            @NonNull final String searchQuery) {
-        view.hideProgress();
-        view.showResultsTitle(searchQuery, sortBy.toString());
+        isLoading = false;
+        final List<Repository> repositories = new ArrayList<>();
         for (com.evastos.githubrepos.data.model.response.Repository repositoryItem : data) {
             repositories.add(new Repository(repositoryItem));
         }
-        view.showRepositories(repositories);
+        if (page == FIRST_PAGE) {
+            this.repositories = repositories;
+        } else {
+            this.repositories.addAll(repositories);
+        }
+        if (!view.isAdded()) {
+            return;
+        }
+        shouldLoadMore = this.repositories.size() < totalItemCount;
+        view.hideProgress();
+        view.hideLoadingMore();
+        view.showResultsTitle(searchQuery, sortBy.toString());
+        if (page == FIRST_PAGE) {
+            view.showRepositories(repositories);
+        } else {
+            view.addRepositories(repositories);
+        }
     }
 
     private void onError() {
+        isLoading = false;
+        if (!view.isAdded()) {
+            return;
+        }
+        view.hideLoadingMore();
         view.hideProgress();
         view.showError(this);
     }

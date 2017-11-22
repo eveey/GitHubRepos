@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2017 Eva Štos
+  ~ All rights reserved.
+  -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ProgressBar
+        style="@android:style/Widget.Holo.ProgressBar.Small"
+        android:id="@+id/recycler_view_item_loading_progress_bar"
+        android:layout_width="wrap_content"
+        android:padding="@dimen/spacing1x"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:indeterminate="true"
+        tools:visibility="visible"/>
+
+</FrameLayout>

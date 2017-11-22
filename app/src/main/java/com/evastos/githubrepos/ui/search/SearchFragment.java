@@ -6,8 +6,10 @@
 package com.evastos.githubrepos.ui.search;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
@@ -18,13 +20,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.evastos.githubrepos.GitHubReposApp;
 import com.evastos.githubrepos.R;
 import com.evastos.githubrepos.data.service.GitHubService;
 import com.evastos.githubrepos.ui.base.BaseFragment;
 import com.evastos.githubrepos.ui.model.Repository;
+import com.evastos.githubrepos.ui.search.adapter.RepositoryAdapter;
 
 import java.util.List;
 
@@ -35,7 +37,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 /**
- * A fragment for searching repositories on GitHub.
+ * Fragment for searching repositories on GitHub.
  */
 public class SearchFragment extends BaseFragment implements SearchContract.View {
 
@@ -54,6 +56,31 @@ public class SearchFragment extends BaseFragment implements SearchContract.View 
     @Inject
     GitHubService gitHubService;
 
+    @Nullable
+    private RepositoryAdapter repositoryAdapter;
+
+    @NonNull
+    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+            final int totalItemCount = linearLayoutManager.getItemCount();
+            final int lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+            final int visibleThreshold = 5;
+            if (!presenter.isLoading() && totalItemCount <= (lastVisibleItem + visibleThreshold) && dy > 0) {
+                //End of the items
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        presenter.onLoadNextPage();
+                    }
+                });
+            }
+        }
+    };
+
     private SearchContract.Presenter presenter;
 
     private Unbinder unbinder;
@@ -69,11 +96,13 @@ public class SearchFragment extends BaseFragment implements SearchContract.View 
         return view;
     }
 
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         searchView.setOnQueryTextListener(this);
         setHasOptionsMenu(true);
+        repositoriesRecyclerView.addOnScrollListener(onScrollListener);
     }
 
     @Override
@@ -166,6 +195,36 @@ public class SearchFragment extends BaseFragment implements SearchContract.View 
 
     @Override
     public void showRepositories(@NonNull final List<Repository> repositories) {
-        Toast.makeText(getActivity(), String.valueOf(repositories), Toast.LENGTH_LONG).show();
+        repositoryAdapter = new RepositoryAdapter(getActivity(), repositories, this);
+        repositoriesRecyclerView.setAdapter(repositoryAdapter);
+    }
+
+    @Override
+    public void showLoadingMore() {
+        if (repositoryAdapter == null) {
+            return;
+        }
+        repositoryAdapter.setLoading(true);
+    }
+
+    @Override
+    public void hideLoadingMore() {
+        if (repositoryAdapter == null) {
+            return;
+        }
+        repositoryAdapter.setLoading(false);
+    }
+
+    @Override
+    public void addRepositories(@NonNull List<Repository> repositories) {
+        if (repositoryAdapter == null) {
+            return;
+        }
+        repositoryAdapter.addRepositories(repositories);
+    }
+
+    @Override
+    public void onClick(@NonNull Repository repository) {
+        presenter.onRepositoryClick(repository);
     }
 }

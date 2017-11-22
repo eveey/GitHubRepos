@@ -13,4 +13,9 @@
     <string name="menu_item_title_sort_by_forks_desc">Forks DESC</string>
     <string name="menu_item_title_sort_by_updated_asc">Updated ASC</string>
     <string name="menu_item_title_sort_by_updated_desc">Updated DESC</string>
+
+    <string name="repository_item_owner_format">Owner:\n%s</string>
+    <string name="repository_item_watchers_format">Watchers: %d</string>
+    <string name="repository_item_forks_format">Forks: %d</string>
+    <string name="repository_item_issues_format">Issues: %d</string>
 </resources>

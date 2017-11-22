@@ -18,12 +18,12 @@ import java.util.Locale;
 public enum SortBy {
 
     BEST_MATCH(Sorting.NONE, Ordering.NONE),
-    STARS_ASC(Sorting.STARS, Ordering.ASC),
     STARS_DESC(Sorting.STARS, Ordering.DESC),
-    FORKS_ASC(Sorting.FORKS, Ordering.ASC),
+    STARS_ASC(Sorting.STARS, Ordering.ASC),
     FORKS_DESC(Sorting.FORKS, Ordering.DESC),
-    UPDATED_ASC(Sorting.UPDATED, Ordering.ASC),
-    UPDATED_DESC(Sorting.UPDATED, Ordering.DESC);
+    FORKS_ASC(Sorting.FORKS, Ordering.ASC),
+    UPDATED_DESC(Sorting.UPDATED, Ordering.DESC),
+    UPDATED_ASC(Sorting.UPDATED, Ordering.ASC);
 
     @NonNull
     private final Sorting sorting;

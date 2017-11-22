@@ -1,0 +1,7 @@
+<!--
+  ~ Copyright (c) 2017 Eva Štos
+  ~ All rights reserved.
+  -->
+<resources>
+    <dimen name="repository_item_name_width">150dp</dimen>
+</resources>

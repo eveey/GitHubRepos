@@ -13,6 +13,7 @@ import android.support.v7.widget.SearchView;
 import com.evastos.githubrepos.ui.base.BaseView;
 import com.evastos.githubrepos.ui.base.ErrorViewListener;
 import com.evastos.githubrepos.ui.model.Repository;
+import com.evastos.githubrepos.ui.search.adapter.RepositoryClickListener;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ import java.util.List;
  */
 interface SearchContract {
 
-    interface View extends BaseView, SearchView.OnQueryTextListener {
+    interface View extends BaseView, SearchView.OnQueryTextListener, RepositoryClickListener {
 
         void showProgress();
 
@@ -32,6 +33,12 @@ interface SearchContract {
         void clearSearchFocus();
 
         void showRepositories(@NonNull List<Repository> repositories);
+
+        void showLoadingMore();
+
+        void hideLoadingMore();
+
+        void addRepositories(@NonNull List<Repository> repositories);
     }
 
     interface Presenter extends ErrorViewListener {
@@ -48,18 +55,22 @@ interface SearchContract {
 
         void onSortByBestMatch();
 
-        void onSortByStarsAsc();
-
         void onSortByStarsDesc();
 
-        void onSortByForksAsc();
+        void onSortByStarsAsc();
 
         void onSortByForksDesc();
 
-        void onSortByUpdatedAsc();
+        void onSortByForksAsc();
 
         void onSortByUpdatedDesc();
 
+        void onSortByUpdatedAsc();
+
         void onLoadNextPage();
+
+        boolean isLoading();
+
+        void onRepositoryClick(@NonNull Repository repository);
     }
 }

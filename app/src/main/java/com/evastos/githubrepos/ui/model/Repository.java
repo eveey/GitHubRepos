@@ -14,33 +14,6 @@ import android.support.annotation.NonNull;
  */
 public class Repository implements Parcelable {
 
-    private final long repositoryId;
-
-    public Repository(@NonNull final com.evastos.githubrepos.data.model.response.Repository repository) {
-        this.repositoryId = repository.getId();
-    }
-
-    @Override
-    public String toString() {
-        return "Repository{" +
-                "repositoryId=" + repositoryId +
-                '}';
-    }
-
-    private Repository(Parcel in) {
-        this.repositoryId = in.readLong();
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(repositoryId);
-    }
-
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public Repository createFromParcel(Parcel in) {
             return new Repository(in);
@@ -50,4 +23,79 @@ public class Repository implements Parcelable {
             return new Repository[size];
         }
     };
+
+    @NonNull
+    private final String repositoryName;
+
+    @NonNull
+    private final String ownerAvatarUrl;
+
+    @NonNull
+    private final String ownerName;
+
+    private int watchersCount;
+
+    private int forksCount;
+
+    private int issuesCount;
+
+    public Repository(@NonNull final com.evastos.githubrepos.data.model.response.Repository repository) {
+        repositoryName = repository.getName();
+        ownerName = repository.getOwner().getLogin();
+        ownerAvatarUrl = repository.getOwner().getAvatarUrl();
+        watchersCount = repository.getWatchersCount();
+        forksCount = repository.getForksCount();
+        issuesCount = repository.getOpenIssuesCount();
+    }
+
+    private Repository(Parcel in) {
+        repositoryName = in.readString();
+        ownerAvatarUrl = in.readString();
+        ownerName = in.readString();
+        watchersCount = in.readInt();
+        forksCount = in.readInt();
+        issuesCount = in.readInt();
+    }
+
+    @NonNull
+    public String getRepositoryName() {
+        return repositoryName;
+    }
+
+    @NonNull
+    public String getOwnerAvatarUrl() {
+        return ownerAvatarUrl;
+    }
+
+    @NonNull
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public int getWatchersCount() {
+        return watchersCount;
+    }
+
+    public int getForksCount() {
+        return forksCount;
+    }
+
+    public int getIssuesCount() {
+        return issuesCount;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(repositoryName);
+        dest.writeString(ownerAvatarUrl);
+        dest.writeString(ownerName);
+        dest.writeInt(watchersCount);
+        dest.writeInt(forksCount);
+        dest.writeInt(issuesCount);
+    }
 }

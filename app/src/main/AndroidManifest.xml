@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <meta-data
+        android:name="com.evastos.githubrepos.util.GlideConfiguration"
+        android:value="GlideModule" />
+
     <application
         android:name=".GitHubReposApp"
         android:allowBackup="true"
