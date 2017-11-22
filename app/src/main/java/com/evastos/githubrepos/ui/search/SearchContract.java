@@ -5,14 +5,13 @@
 
 package com.evastos.githubrepos.ui.search;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.SearchView;
 
 import com.evastos.githubrepos.ui.base.BaseView;
 import com.evastos.githubrepos.ui.base.ErrorViewListener;
 import com.evastos.githubrepos.ui.model.Repository;
+import com.evastos.githubrepos.ui.model.SearchState;
 import com.evastos.githubrepos.ui.search.adapter.RepositoryClickListener;
 
 import java.util.List;
@@ -43,13 +42,11 @@ interface SearchContract {
 
     interface Presenter extends ErrorViewListener {
 
-        void onStart();
+        void onStart(@NonNull SearchState searchState);
 
         void onStop();
 
-        void onSaveState(@NonNull Bundle bundle);
-
-        void onRestoreState(@Nullable Bundle bundle);
+        SearchState onSaveState();
 
         void onSearchRepositories(@NonNull String searchQuery);
 

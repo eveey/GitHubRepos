@@ -26,8 +26,11 @@ import com.evastos.githubrepos.R;
 import com.evastos.githubrepos.data.service.GitHubService;
 import com.evastos.githubrepos.ui.base.BaseFragment;
 import com.evastos.githubrepos.ui.model.Repository;
+import com.evastos.githubrepos.ui.model.SearchState;
+import com.evastos.githubrepos.ui.model.SortBy;
 import com.evastos.githubrepos.ui.search.adapter.RepositoryAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -40,6 +43,14 @@ import butterknife.Unbinder;
  * Fragment for searching repositories on GitHub.
  */
 public class SearchFragment extends BaseFragment implements SearchContract.View {
+
+    private static final String BUNDLE_STATE_REPOSITORIES = "repositories";
+
+    private static final String BUNDLE_STATE_SORT_BY = "sortBy";
+
+    private static final String BUNDLE_STATE_PAGE = "page";
+
+    private static final String BUNDLE_STATE_SEARCH_QUERY = "searchQuery";
 
     @BindView(R.id.fragment_search_search_view_repositories)
     SearchView searchView;
@@ -144,8 +155,25 @@ public class SearchFragment extends BaseFragment implements SearchContract.View 
         super.onActivityCreated(savedInstanceState);
         GitHubReposApp.getApp(getActivity()).getAppComponent().inject(this);
         presenter = new SearchPresenter(this, gitHubService);
-        presenter.onRestoreState(savedInstanceState);
-        presenter.onStart();
+        final ArrayList<Repository> repositories;
+        final String searchQuery;
+        final SortBy sortBy;
+        final int page;
+        if (savedInstanceState == null) {
+            repositories = null;
+            searchQuery = null;
+            sortBy = SortBy.BEST_MATCH;
+            page = 1;
+        } else {
+            repositories = savedInstanceState.containsKey(BUNDLE_STATE_REPOSITORIES)
+                    ? savedInstanceState.<Repository>getParcelableArrayList(BUNDLE_STATE_REPOSITORIES) : null;
+            searchQuery = savedInstanceState.getString(BUNDLE_STATE_SEARCH_QUERY, null);
+            final SortBy sortBySaved = (SortBy) savedInstanceState.getSerializable(BUNDLE_STATE_SORT_BY);
+            sortBy = savedInstanceState.containsKey(BUNDLE_STATE_SORT_BY) && sortBySaved != null ? sortBySaved : SortBy.BEST_MATCH;
+            page = savedInstanceState.getInt(BUNDLE_STATE_PAGE, 1);
+        }
+        final SearchState searchState = new SearchState(repositories, searchQuery, sortBy, page);
+        presenter.onStart(searchState);
     }
 
     @Override
@@ -157,7 +185,11 @@ public class SearchFragment extends BaseFragment implements SearchContract.View 
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        presenter.onSaveState(outState);
+        final SearchState searchState = presenter.onSaveState();
+        outState.putParcelableArrayList(BUNDLE_STATE_REPOSITORIES, searchState.getRepositories());
+        outState.putString(BUNDLE_STATE_SEARCH_QUERY, searchState.getSearchQuery());
+        outState.putInt(BUNDLE_STATE_PAGE, searchState.getPage());
+        outState.putSerializable(BUNDLE_STATE_SORT_BY, searchState.getSortBy());
         super.onSaveInstanceState(outState);
     }
 

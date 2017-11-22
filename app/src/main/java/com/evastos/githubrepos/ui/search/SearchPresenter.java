@@ -5,14 +5,13 @@
 
 package com.evastos.githubrepos.ui.search;
 
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.evastos.githubrepos.data.model.response.RepositoriesResponse;
 import com.evastos.githubrepos.data.service.GitHubService;
 import com.evastos.githubrepos.ui.model.Repository;
+import com.evastos.githubrepos.ui.model.SearchState;
 import com.evastos.githubrepos.ui.model.SortBy;
 
 import java.util.ArrayList;
@@ -25,14 +24,6 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 class SearchPresenter implements SearchContract.Presenter {
-
-    private static final String BUNDLE_STATE_SORT_BY = "sortBy";
-
-    private static final String BUNDLE_STATE_PAGE = "page";
-
-    private static final String BUNDLE_STATE_SEARCH_QUERY = "searchQuery";
-
-    private static final String BUNDLE_STATE_REPOSITORIES = "repositories";
 
     private static final int FIRST_PAGE = 1;
 
@@ -70,9 +61,13 @@ class SearchPresenter implements SearchContract.Presenter {
     }
 
     @Override
-    public void onStart() {
+    public void onStart(@NonNull final SearchState searchState) {
+        this.repositories = searchState.getRepositories() != null ? searchState.getRepositories() : new ArrayList<Repository>();
+        this.page = searchState.getPage();
+        this.sortBy = searchState.getSortBy();
+        this.searchQuery = searchState.getSearchQuery();
         if (searchQuery != null) {
-            view.showRepositories(repositories);
+            view.showRepositories(this.repositories);
             view.showResultsTitle(searchQuery, sortBy.toString());
         }
     }
@@ -84,32 +79,8 @@ class SearchPresenter implements SearchContract.Presenter {
     }
 
     @Override
-    public void onSaveState(@NonNull final Bundle bundle) {
-        bundle.putSerializable(BUNDLE_STATE_SORT_BY, sortBy);
-        bundle.putInt(BUNDLE_STATE_PAGE, page);
-        bundle.putString(BUNDLE_STATE_SEARCH_QUERY, searchQuery);
-        bundle.putParcelableArrayList(BUNDLE_STATE_REPOSITORIES, (ArrayList<? extends Parcelable>) repositories);
-    }
-
-    @Override
-    public void onRestoreState(@Nullable Bundle bundle) {
-        if (bundle == null) {
-            return;
-        }
-        if (bundle.containsKey(BUNDLE_STATE_SORT_BY)) {
-            final SortBy sortBy = (SortBy) bundle.getSerializable(BUNDLE_STATE_SORT_BY);
-            if (sortBy != null) {
-                this.sortBy = sortBy;
-            }
-        }
-        page = bundle.getInt(BUNDLE_STATE_PAGE, FIRST_PAGE);
-        searchQuery = bundle.getString(BUNDLE_STATE_SEARCH_QUERY, null);
-        if (bundle.containsKey(BUNDLE_STATE_REPOSITORIES)) {
-            final List<Repository> repositories = bundle.getParcelableArrayList(BUNDLE_STATE_REPOSITORIES);
-            if (repositories != null) {
-                this.repositories = repositories;
-            }
-        }
+    public SearchState onSaveState() {
+        return new SearchState((ArrayList<Repository>) repositories, searchQuery, sortBy, page);
     }
 
     @Override
@@ -230,11 +201,11 @@ class SearchPresenter implements SearchContract.Presenter {
         searchRepositories();
     }
 
-    private void onSuccess(@NonNull final List<com.evastos.githubrepos.data.model.response.Repository> data,
+    private void onSuccess(@NonNull final List<com.evastos.githubrepos.data.model.response.Repository> items,
                            @NonNull final String searchQuery) {
         isLoading = false;
         final List<Repository> repositories = new ArrayList<>();
-        for (com.evastos.githubrepos.data.model.response.Repository repositoryItem : data) {
+        for (com.evastos.githubrepos.data.model.response.Repository repositoryItem : items) {
             repositories.add(new Repository(repositoryItem));
         }
         if (page == FIRST_PAGE) {
