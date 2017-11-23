@@ -4,10 +4,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <meta-data
-        android:name="com.evastos.githubrepos.util.GlideConfiguration"
-        android:value="GlideModule" />
-
     <application
         android:name=".GitHubReposApp"
         android:allowBackup="true"
@@ -17,20 +13,27 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <meta-data
+            android:name="com.evastos.githubrepos.util.GlideConfiguration"
+            android:value="AppGlideModule" />
+
         <activity
             android:name=".ui.search.SearchActivity"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.repository_detail.RepositoryDetailActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".ui.search.SearchActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

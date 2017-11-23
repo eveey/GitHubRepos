@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2017 Eva Štos
+  ~ All rights reserved.
+  -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.evastos.githubrepos.ui.search.SearchFragment"
+    tools:showIn="@layout/activity_repository_detail">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing2x">
+
+        <TextView
+            android:id="@+id/fragment_repository_detail_text_view_repository_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:textAllCaps="true"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/textSizeLarge"
+            android:textStyle="bold"
+            tools:text="REPOSITORY NAME" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing2x"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/fragment_repository_detail_image_view_owner"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_account_circle_black_48px" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing2x"
+                android:gravity="start|center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/fragment_repository_detail_text_view_owner_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/textSizeSmall"
+                    android:textStyle="bold"
+                    tools:text="Owner: " />
+
+                <TextView
+                    android:id="@+id/fragment_repository_detail_text_view_date_created"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing1x"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/textSizeSmall"
+                    tools:text="Date created: " />
+
+                <TextView
+                    android:id="@+id/fragment_repository_detail_text_view_date_updated"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/textSizeSmall"
+                    tools:text="Date updated: " />
+
+                <TextView
+                    android:id="@+id/fragment_repository_detail_text_view_language"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/textSizeSmall"
+                    tools:text="Language: " />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/fragment_repository_detail_text_view_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing2x"
+            android:gravity="start"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/textSizeSmall"
+            tools:text="Description" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing2x"
+            android:gravity="start|center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <RelativeLayout
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/fragment_repository_detail_text_view_watchers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/textSizeSmall"
+                    tools:text="Watchers: 2736" />
+
+                <TextView
+                    android:id="@+id/fragment_repository_detail_text_view_forks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/fragment_repository_detail_text_view_watchers"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/textSizeSmall"
+                    tools:text="Forks: 29827" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/fragment_repository_detail_text_view_stargazers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/textSizeSmall"
+                    tools:text="Stargazers: 29827" />
+
+                <TextView
+                    android:id="@+id/fragment_repository_detail_text_view_issues"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/fragment_repository_detail_text_view_stargazers"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/textSizeSmall"
+                    tools:text="Issues: 29827" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/fragment_repository_detail_button_open"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/spacing3x"
+            android:paddingBottom="@dimen/spacing2x"
+            android:paddingEnd="@dimen/spacing3x"
+            android:paddingStart="@dimen/spacing3x"
+            android:paddingTop="@dimen/spacing2x"
+            android:text="@string/repository_detail_button_open"
+            android:textAllCaps="true"
+            android:textSize="@dimen/textSizeSmall"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</ScrollView>

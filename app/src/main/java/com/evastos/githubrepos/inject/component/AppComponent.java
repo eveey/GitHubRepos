@@ -8,6 +8,7 @@ package com.evastos.githubrepos.inject.component;
 import com.evastos.githubrepos.inject.module.AppModule;
 import com.evastos.githubrepos.inject.module.GitHubModule;
 import com.evastos.githubrepos.inject.module.NetworkModule;
+import com.evastos.githubrepos.ui.repository_detail.RepositoryDetailFragment;
 import com.evastos.githubrepos.ui.search.SearchFragment;
 
 import javax.inject.Singleton;
@@ -19,4 +20,6 @@ import dagger.Component;
 public interface AppComponent {
 
     void inject(SearchFragment searchFragment);
+
+    void inject(RepositoryDetailFragment repositoryDetailFragment);
 }

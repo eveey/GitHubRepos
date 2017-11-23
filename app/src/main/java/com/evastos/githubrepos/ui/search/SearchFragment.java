@@ -5,6 +5,7 @@
 
 package com.evastos.githubrepos.ui.search;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -28,6 +29,7 @@ import com.evastos.githubrepos.ui.base.BaseFragment;
 import com.evastos.githubrepos.ui.model.Repository;
 import com.evastos.githubrepos.ui.model.SearchState;
 import com.evastos.githubrepos.ui.model.SortBy;
+import com.evastos.githubrepos.ui.repository_detail.RepositoryDetailActivity;
 import com.evastos.githubrepos.ui.search.adapter.RepositoryAdapter;
 
 import java.util.ArrayList;
@@ -253,6 +255,12 @@ public class SearchFragment extends BaseFragment implements SearchContract.View 
             return;
         }
         repositoryAdapter.addRepositories(repositories);
+    }
+
+    @Override
+    public void openRepositoryDetail(@NonNull final Repository repository) {
+        final Intent intent = RepositoryDetailActivity.getIntent(getActivity(), repository);
+        startActivity(intent);
     }
 
     @Override

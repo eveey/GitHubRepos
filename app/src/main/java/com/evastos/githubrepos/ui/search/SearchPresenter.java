@@ -23,6 +23,9 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+/**
+ * Presenter for {@link SearchFragment}
+ */
 class SearchPresenter implements SearchContract.Presenter {
 
     private static final int FIRST_PAGE = 1;
@@ -157,8 +160,8 @@ class SearchPresenter implements SearchContract.Presenter {
     }
 
     @Override
-    public void onRepositoryClick(@NonNull Repository repository) {
-        // todo: open detail screen
+    public void onRepositoryClick(@NonNull final Repository repository) {
+        view.openRepositoryDetail(repository);
     }
 
     private void searchRepositories() {

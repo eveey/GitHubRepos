@@ -50,9 +50,6 @@ public class RepositoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private final String issuesFormat;
 
     @NonNull
-    private final RepositoryClickListener repositoryClickListener;
-
-    @NonNull
     private final RequestManager imageManager;
 
     @NonNull
@@ -60,6 +57,9 @@ public class RepositoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @NonNull
     private final RequestOptions imageOptions;
+
+    @NonNull
+    private final RepositoryClickListener repositoryClickListener;
 
     private boolean isLoading = false;
 
@@ -72,10 +72,10 @@ public class RepositoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         imageManager = Glide.with(context);
         placeholderOwnerImage = context.getResources().getDrawable(R.drawable.ic_account_circle_black_36px);
         imageOptions = new RequestOptions().fitCenter().placeholder(placeholderOwnerImage).fallback(placeholderOwnerImage);
-        ownerFormat = context.getString(R.string.repository_item_owner_format);
-        watchersFormat = context.getString(R.string.repository_item_watchers_format);
-        forksFormat = context.getString(R.string.repository_item_forks_format);
-        issuesFormat = context.getString(R.string.repository_item_issues_format);
+        ownerFormat = context.getString(R.string.owner_format);
+        watchersFormat = context.getString(R.string.watchers_format);
+        forksFormat = context.getString(R.string.forks_format);
+        issuesFormat = context.getString(R.string.issues_format);
     }
 
     @Override

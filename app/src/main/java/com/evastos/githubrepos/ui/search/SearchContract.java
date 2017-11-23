@@ -38,6 +38,8 @@ interface SearchContract {
         void hideLoadingMore();
 
         void addRepositories(@NonNull List<Repository> repositories);
+
+        void openRepositoryDetail(@NonNull final Repository repository);
     }
 
     interface Presenter extends ErrorViewListener {

@@ -1,9 +1,9 @@
 <resources>
     <dimen name="textSizeXSmall">14sp</dimen>
     <dimen name="textSizeSmall">16sp</dimen>
-    <!--<dimen name="textSizeMedium">20sp</dimen>-->
-    <!--<dimen name="textSizeLarge">24sp</dimen>-->
-    <!--<dimen name="textSizeXLarge">32sp</dimen>-->
+    <dimen name="textSizeMedium">20sp</dimen>
+    <dimen name="textSizeLarge">24sp</dimen>
+    <dimen name="textSizeXLarge">32sp</dimen>
 
     <dimen name="spacing1x">8dp</dimen>
     <dimen name="spacing2x">16dp</dimen>

@@ -14,8 +14,14 @@
     <string name="menu_item_title_sort_by_updated_asc">Updated ASC</string>
     <string name="menu_item_title_sort_by_updated_desc">Updated DESC</string>
 
-    <string name="repository_item_owner_format">Owner:\n%s</string>
-    <string name="repository_item_watchers_format">Watchers: %d</string>
-    <string name="repository_item_forks_format">Forks: %d</string>
-    <string name="repository_item_issues_format">Issues: %d</string>
+    <string name="owner_format">Owner: %s</string>
+    <string name="watchers_format">Watchers: %d</string>
+    <string name="forks_format">Forks: %d</string>
+    <string name="issues_format">Issues: %d</string>
+    <string name="stargazers_format">Stargazers: %d</string>
+    <string name="language_format">Language: %s</string>
+    <string name="date_created_format">Date created: %s</string>
+    <string name="date_updated_format">Date updated: %s</string>
+
+    <string name="repository_detail_button_open">Open repository</string>
 </resources>
