@@ -213,10 +213,10 @@ class SearchPresenter implements SearchContract.Presenter {
         } else {
             this.repositories.addAll(repositories);
         }
+        shouldLoadMore = this.repositories.size() < totalItemCount;
         if (!view.isAdded()) {
             return;
         }
-        shouldLoadMore = this.repositories.size() < totalItemCount;
         view.hideProgress();
         view.hideLoadingMore();
         view.showResultsTitle(searchQuery, sortBy.toString());

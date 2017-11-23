@@ -5,15 +5,13 @@
 
 package com.evastos.githubrepos.ui.search;
 
-import android.os.Bundle;
-import android.os.Parcelable;
-
 import com.evastos.githubrepos.data.model.request.Ordering;
 import com.evastos.githubrepos.data.model.request.Sorting;
 import com.evastos.githubrepos.data.model.response.RepositoriesResponse;
 import com.evastos.githubrepos.data.model.response.User;
 import com.evastos.githubrepos.data.service.GitHubService;
 import com.evastos.githubrepos.ui.model.Repository;
+import com.evastos.githubrepos.ui.model.SearchState;
 import com.evastos.githubrepos.ui.model.SortBy;
 
 import org.junit.AfterClass;
@@ -25,7 +23,6 @@ import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Scheduler;
@@ -34,11 +31,15 @@ import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
+import static java.lang.Thread.sleep;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -55,7 +56,7 @@ public class SearchPresenterTest {
 
     private final RepositoriesResponse testResponse = getTestResponse();
 
-    private final List<Repository> testRepositories = getTestRepositories();
+    private final ArrayList<Repository> testRepositories = getTestRepositories();
 
     private SearchContract.Presenter presenter;
 
@@ -82,321 +83,338 @@ public class SearchPresenterTest {
         RxAndroidPlugins.reset();
     }
 
-        /*
+    @Test
+    public void onStart_withSearchState_withSearchQuery_showsRepositories() {
+        final SearchState searchState = new SearchState(testRepositories, "qwerty", SortBy.STARS_ASC, 5);
 
-        void onStart();
+        presenter.onStart(searchState);
 
-        void onStop();
-
-        void onSaveState(@NonNull Bundle bundle);
-
-        void onRestoreState(@Nullable Bundle bundle);
-
-        void onSearchRepositories(@NonNull String searchQuery);
-
-        void onSortByBestMatch();
-
-        void onSortByStarsDesc();
-
-        void onSortByStarsAsc();
-
-        void onSortByForksDesc();
-
-        void onSortByForksAsc();
-
-        void onSortByUpdatedDesc();
-
-        void onSortByUpdatedAsc();
-
-        void onLoadNextPage();
-
-        boolean isLoading();
-
-        void onRepositoryClick(@NonNull Repository repository);
-     */
+        verify(view).showRepositories(testRepositories);
+    }
 
     @Test
-    public void onStart_withSavedStateNull_doesNothing() {
-        final Bundle savedState = null;
+    public void onStart_withSavedState_withSearchQuery_showsResultsTitle() {
+        final SearchState searchState = new SearchState(testRepositories, "qwerty", SortBy.UPDATED_DESC, 5);
 
-        presenter.onStart(null);
+        presenter.onStart(searchState);
+
+        verify(view).showResultsTitle("qwerty", "updated desc");
+    }
+
+    @Test
+    public void onStart_withSearchState_withoutSearchQuery_doesNothing() {
+        final SearchState searchState = new SearchState(testRepositories, null, SortBy.UPDATED_DESC, 5);
+
+        presenter.onStart(searchState);
 
         verify(view, never()).showRepositories(ArgumentMatchers.<Repository>anyList());
         verify(view, never()).showResultsTitle(anyString(), anyString());
     }
 
     @Test
-    public void onStart_withSavedState_showsRepositories() {
-        final Bundle savedState = new Bundle();
-        savedState.putParcelableArrayList("repositories", (ArrayList<? extends Parcelable>) testRepositories);
-        savedState.putString("searchQuery", "qwerty");
-        savedState.putSerializable("sortBy", SortBy.STARS_ASC);
-        savedState.putInt("page", 5);
+    public void onSaveState_defaultState_returnsDefaultState() {
+        final SearchState expectedState = new SearchState(new ArrayList<Repository>(), null, SortBy.BEST_MATCH, 1);
 
-        presenter.onStart(null);
+        final SearchState searchState = presenter.onSaveState();
+
+        assertEquals(expectedState, searchState);
+    }
+
+    @Test
+    public void onSaveState_changedState_returnsChangedState() throws InterruptedException {
+        ArrayList<Repository> allRepositories = new ArrayList<>();
+        allRepositories.addAll(testRepositories);
+        allRepositories.addAll(testRepositories);
+        allRepositories.addAll(testRepositories);
+        final SearchState expectedState = new SearchState(allRepositories, "qwe", SortBy.FORKS_DESC, 3);
+        presenter.onSearchRepositories("qwe");
+        sleep(THREAD_SLEEP_MILLIS);
+        presenter.onSortByForksDesc();
+        sleep(THREAD_SLEEP_MILLIS);
+        presenter.onLoadNextPage();
+        sleep(THREAD_SLEEP_MILLIS);
+        presenter.onLoadNextPage();
+        sleep(THREAD_SLEEP_MILLIS);
+
+        final SearchState searchState = presenter.onSaveState();
+
+        assertEquals(expectedState.getRepositories(), searchState.getRepositories());
+    }
+
+    @Test
+    public void onSearchRepositories_changedState_returnsChangedState() throws InterruptedException {
+        ArrayList<Repository> allRepositories = new ArrayList<>();
+        allRepositories.addAll(testRepositories);
+        allRepositories.addAll(testRepositories);
+        allRepositories.addAll(testRepositories);
+        final SearchState expectedState = new SearchState(allRepositories, "qwe", SortBy.FORKS_DESC, 3);
+        presenter.onSearchRepositories("qwe");
+        sleep(THREAD_SLEEP_MILLIS);
+        presenter.onSortByForksDesc();
+        sleep(THREAD_SLEEP_MILLIS);
+        presenter.onLoadNextPage();
+        sleep(THREAD_SLEEP_MILLIS);
+        presenter.onLoadNextPage();
+        sleep(THREAD_SLEEP_MILLIS);
+
+        final SearchState searchState = presenter.onSaveState();
+
+        assertEquals(expectedState.getRepositories(), searchState.getRepositories());
+    }
+
+    @Test
+    public void onSearchRepositories_clearsSearchFocus() {
+        presenter.onSearchRepositories("wrt");
+
+        verify(view).clearSearchFocus();
+    }
+
+    @Test
+    public void onSearchRepositories_callsGitHubServiceWithCorrectParameters() {
+        presenter.onSearchRepositories("wrt");
+
+        verify(gitHubService).searchRepositories("wrt", Sorting.NONE, Ordering.NONE, 1, 50);
+    }
+
+    @Test
+    public void onSearchRepositories_hidesError() {
+        presenter.onSearchRepositories("wrt");
+
+        verify(view).hideError();
+    }
+
+    @Test
+    public void onSearchRepositories_showsProgress() {
+        presenter.onSearchRepositories("wrt");
+
+        verify(view).showProgress();
+    }
+
+    @Test
+    public void onSearchRepositories_onRepositoriesSuccess_withViewAdded_hidesProgress() throws InterruptedException {
+        when(view.isAdded()).thenReturn(true);
+
+        presenter.onSearchRepositories("wrt");
+        sleep(THREAD_SLEEP_MILLIS);
+
+        verify(view).hideProgress();
+    }
+
+    @Test
+    public void onSearchRepositories_onRepositoriesSuccess_withViewAdded_hidesLoadingMore() throws InterruptedException {
+        when(view.isAdded()).thenReturn(true);
+
+        presenter.onSearchRepositories("wrt");
+        sleep(THREAD_SLEEP_MILLIS);
+
+        verify(view).hideLoadingMore();
+    }
+
+    @Test
+    public void onSearchRepositories_onRepositoriesSuccess_withViewAdded_showsResultsTitle() throws InterruptedException {
+        when(view.isAdded()).thenReturn(true);
+
+        presenter.onSearchRepositories("wrt");
+        sleep(THREAD_SLEEP_MILLIS);
+
+        verify(view).showResultsTitle("wrt", "best match");
+    }
+
+    @Test
+    public void onSearchRepositories_onRepositoriesSuccess_withViewAdded_showsRepositories() throws InterruptedException {
+        when(view.isAdded()).thenReturn(true);
+
+        presenter.onSearchRepositories("wrt");
+        sleep(THREAD_SLEEP_MILLIS);
 
         verify(view).showRepositories(testRepositories);
     }
 
     @Test
-    public void onStart_withSavedState_showsResultsTitle() {
-        final Bundle savedState = new Bundle();
-        savedState.putParcelableArrayList("repositories", (ArrayList<? extends Parcelable>) testRepositories);
-        savedState.putString("searchQuery", "qwerty");
-        savedState.putSerializable("sortBy", SortBy.UPDATED_DESC);
-        savedState.putInt("page", 5);
+    public void onSearchRepositories_onRepositoriesSuccess_withViewNotAdded_doesNothing() throws InterruptedException {
+        when(view.isAdded()).thenReturn(false);
 
-        presenter.onStart(null);
+        presenter.onSearchRepositories("wrt");
+        sleep(THREAD_SLEEP_MILLIS);
 
-        verify(view).showResultsTitle("qwerty", "updated desc");
+        verify(view, never()).hideLoadingMore();
+        verify(view, never()).hideProgress();
+        verify(view, never()).showResultsTitle(anyString(), anyString());
+        verify(view, never()).showRepositories(ArgumentMatchers.<Repository>anyList());
     }
 
-    /*
-        @Override
-    public void onStart(@Nullable Bundle savedState) {
-        if (savedState == null) {
-            return;
-        }
-        if (savedState.containsKey(BUNDLE_STATE_SORT_BY)) {
-            final SortBy sortBy = (SortBy) savedState.getSerializable(BUNDLE_STATE_SORT_BY);
-            if (sortBy != null) {
-                this.sortBy = sortBy;
-            }
-        }
-        page = savedState.getInt(BUNDLE_STATE_PAGE, FIRST_PAGE);
-        searchQuery = savedState.getString(BUNDLE_STATE_SEARCH_QUERY, null);
-        if (savedState.containsKey(BUNDLE_STATE_REPOSITORIES)) {
-            final List<Repository> repositories = savedState.getParcelableArrayList(BUNDLE_STATE_REPOSITORIES);
-            if (repositories != null) {
-                this.repositories = repositories;
-            }
-        }
-        if (searchQuery != null) {
-            view.showRepositories(repositories);
-            view.showResultsTitle(searchQuery, sortBy.toString());
-        }
-    }
-     */
+    @Test
+    public void onSearchRepositories_onRepositoriesError_withViewAdded_hidesProgress() throws InterruptedException {
+        when(view.isAdded()).thenReturn(true);
+        when(gitHubService.searchRepositories(anyString(), any(Sorting.class), any(Ordering.class), anyInt(), anyInt()))
+                .thenReturn(Single.<RepositoriesResponse>error(new Throwable("")));
 
-//    @Test
-//    public void onStart_viewIsAdded_onExchangeRatesSuccess_showsExchangeRates() throws InterruptedException {
-//        Single<List<ExchangeRate>> response = Single.just(testExchangeRates);
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(response);
-//        when(view.isAdded()).thenReturn(true);
-//
-//        presenter.onStart();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(view).showExchangeRates(testExchangeRates);
-//    }
-//
-//    @Test
-//    public void onStart_viewIsAdded_onExchangeRatesSuccess_showsTodaysDate() throws InterruptedException {
-//        Single<List<ExchangeRate>> response = Single.just(testExchangeRates);
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(response);
-//        when(view.isAdded()).thenReturn(true);
-//
-//        presenter.onStart();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(view).showExchangeRatesDate("Jan 18, 1970");
-//    }
-//
-//    @Test
-//    public void onStart_onExchangeRatesSuccess_putsExchangeRatesToCache() throws InterruptedException {
-//        Single<List<ExchangeRate>> response = Single.just(testExchangeRates);
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(response);
-//
-//        presenter.onStart();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(exchangeRateManager).putExchangeRates(testExchangeRates);
-//    }
-//
-//    @Test
-//    public void onStart_showsProgress() {
-//        Single<List<ExchangeRate>> response = Single.just(Collections.<ExchangeRate>emptyList());
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(response);
-//
-//        presenter.onStart();
-//
-//        verify(view).showProgress();
-//    }
-//
-//    @Test
-//    public void onStart_viewIsAdded_onExchangeRatesSuccess_hidesProgress() throws InterruptedException {
-//        Single<List<ExchangeRate>> response = Single.just(testExchangeRates);
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(response);
-//        when(view.isAdded()).thenReturn(true);
-//
-//        presenter.onStart();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(view).hideProgress();
-//    }
-//
-//    @Test
-//    public void onStart_viewIsNotAdded_doesNothing() throws InterruptedException {
-//        Single<List<ExchangeRate>> response = Single.just(testExchangeRates);
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(response);
-//        when(view.isAdded()).thenReturn(false);
-//
-//        presenter.onStart();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(view, never()).hideProgress();
-//        verify(view, never()).showExchangeRates(ArgumentMatchers.<ExchangeRate>anyList());
-//        verify(view, never()).showExchangeRatesDate(anyString());
-//    }
-//
-//    @Test
-//    public void onStart_viewIsAdded_onExchangeRatesError_hidesProgress() throws InterruptedException {
-//        Single<List<ExchangeRate>> errorResponse = Single.error(new Throwable(""));
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(errorResponse);
-//        when(view.isAdded()).thenReturn(true);
-//
-//        presenter.onStart();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(view).hideProgress();
-//    }
-//
-//    @Test
-//    public void onStart_viewIsAdded_onExchangeRatesError_showsError() throws InterruptedException {
-//        Single<List<ExchangeRate>> errorResponse = Single.error(new Throwable(""));
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(errorResponse);
-//        when(view.isAdded()).thenReturn(true);
-//
-//        presenter.onStart();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(view).showError(presenter);
-//    }
-//
-//    @Test
-//    public void onStart_viewIsNotAdded_onExchangeRatesError_doesNothing() throws InterruptedException {
-//        Single<List<ExchangeRate>> errorResponse = Single.error(new Throwable(""));
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(errorResponse);
-//        when(view.isAdded()).thenReturn(false);
-//
-//        presenter.onStart();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(view, never()).hideProgress();
-//        verify(view, never()).showError(presenter);
-//    }
-//
-//    @Test
-//    public void onErrorRefreshClicked_viewIsAdded_onExchangeRatesSuccess_showsExchangeRates() throws InterruptedException {
-//        Single<List<ExchangeRate>> response = Single.just(testExchangeRates);
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(response);
-//        when(view.isAdded()).thenReturn(true);
-//
-//        presenter.onErrorRefreshClicked();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(view).showExchangeRates(testExchangeRates);
-//    }
-//
-//    @Test
-//    public void onErrorRefreshClicked_viewIsAdded_onExchangeRatesSuccess_showsTodaysDate() throws InterruptedException {
-//        Single<List<ExchangeRate>> response = Single.just(testExchangeRates);
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(response);
-//        when(view.isAdded()).thenReturn(true);
-//
-//        presenter.onErrorRefreshClicked();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(view).showExchangeRatesDate("Jan 18, 1970");
-//    }
-//
-//    @Test
-//    public void onErrorRefreshClicked_onExchangeRatesSuccess_putsExchangeRatesToCache() throws InterruptedException {
-//        Single<List<ExchangeRate>> response = Single.just(testExchangeRates);
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(response);
-//
-//        presenter.onErrorRefreshClicked();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(exchangeRateManager).putExchangeRates(testExchangeRates);
-//    }
-//
-//    @Test
-//    public void onErrorRefreshClicked_showsProgress() {
-//        Single<List<ExchangeRate>> response = Single.just(Collections.<ExchangeRate>emptyList());
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(response);
-//
-//        presenter.onErrorRefreshClicked();
-//
-//        verify(view).showProgress();
-//    }
-//
-//    @Test
-//    public void onErrorRefreshClicked_viewIsAdded_onExchangeRatesSuccess_hidesProgress() throws InterruptedException {
-//        Single<List<ExchangeRate>> response = Single.just(testExchangeRates);
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(response);
-//        when(view.isAdded()).thenReturn(true);
-//
-//        presenter.onErrorRefreshClicked();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(view).hideProgress();
-//    }
-//
-//    @Test
-//    public void onErrorRefreshClicked_viewIsNotAdded_doesNothing() throws InterruptedException {
-//        Single<List<ExchangeRate>> response = Single.just(testExchangeRates);
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(response);
-//        when(view.isAdded()).thenReturn(false);
-//
-//        presenter.onErrorRefreshClicked();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(view, never()).hideProgress();
-//        verify(view, never()).showExchangeRates(ArgumentMatchers.<ExchangeRate>anyList());
-//        verify(view, never()).showExchangeRatesDate(anyString());
-//    }
-//
-//    @Test
-//    public void onErrorRefreshClicked_viewIsAdded_onExchangeRatesError_hidesProgress() throws InterruptedException {
-//        Single<List<ExchangeRate>> errorResponse = Single.error(new Throwable(""));
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(errorResponse);
-//        when(view.isAdded()).thenReturn(true);
-//
-//        presenter.onErrorRefreshClicked();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(view).hideProgress();
-//    }
-//
-//    @Test
-//    public void onErrorRefreshClicked_viewIsAdded_onExchangeRatesError_showsError() throws InterruptedException {
-//        Single<List<ExchangeRate>> errorResponse = Single.error(new Throwable(""));
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(errorResponse);
-//        when(view.isAdded()).thenReturn(true);
-//
-//        presenter.onErrorRefreshClicked();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(view).showError(presenter);
-//    }
-//
-//    @Test
-//    public void onErrorRefreshClicked_viewIsNotAdded_onExchangeRatesError_doesNothing() throws InterruptedException {
-//        Single<List<ExchangeRate>> errorResponse = Single.error(new Throwable(""));
-//        when(exchangeRateManager.getDailyRates(any(CacheOption.class))).thenReturn(errorResponse);
-//        when(view.isAdded()).thenReturn(false);
-//
-//        presenter.onErrorRefreshClicked();
-//        sleep(THREAD_SLEEP_MILLIS);
-//
-//        verify(view, never()).hideProgress();
-//        verify(view, never()).showError(presenter);
-//    }
+        presenter.onSearchRepositories("wrt");
+        sleep(THREAD_SLEEP_MILLIS);
+
+        verify(view).hideProgress();
+    }
+
+    @Test
+    public void onSearchRepositories_onRepositoriesError_withViewAdded_hidesLoadingMore() throws InterruptedException {
+        when(view.isAdded()).thenReturn(true);
+        when(gitHubService.searchRepositories(anyString(), any(Sorting.class), any(Ordering.class), anyInt(), anyInt()))
+                .thenReturn(Single.<RepositoriesResponse>error(new Throwable("")));
+
+        presenter.onSearchRepositories("wrt");
+        sleep(THREAD_SLEEP_MILLIS);
+
+        verify(view).hideLoadingMore();
+    }
+
+    @Test
+    public void onSearchRepositories_onRepositoriesError_withViewAdded_showsError() throws InterruptedException {
+        when(view.isAdded()).thenReturn(true);
+        when(gitHubService.searchRepositories(anyString(), any(Sorting.class), any(Ordering.class), anyInt(), anyInt()))
+                .thenReturn(Single.<RepositoriesResponse>error(new Throwable("")));
+
+        presenter.onSearchRepositories("wrt");
+        sleep(THREAD_SLEEP_MILLIS);
+
+        verify(view).showError(presenter);
+    }
+
+    @Test
+    public void onSearchRepositories_onRepositoriesError_withViewNotAdded_doesNothing() throws InterruptedException {
+        when(view.isAdded()).thenReturn(false);
+        when(gitHubService.searchRepositories(anyString(), any(Sorting.class), any(Ordering.class), anyInt(), anyInt()))
+                .thenReturn(Single.<RepositoriesResponse>error(new Throwable("")));
+
+        presenter.onSearchRepositories("wrt");
+        sleep(THREAD_SLEEP_MILLIS);
+
+        verify(view, never()).hideLoadingMore();
+        verify(view, never()).hideProgress();
+        verify(view, never()).showError(any(SearchPresenter.class));
+    }
+
+    @Test
+    public void onSortByBestMatch_callsGitHubServiceWithNoSortingNoOrdering() {
+        presenter.onSearchRepositories("yeey");
+
+        verify(gitHubService).searchRepositories("yeey", Sorting.NONE, Ordering.NONE, 1, 50);
+    }
+
+    @Test
+    public void onSortByStarsDesc_callsGitHubServiceWithSortingStarsOrderingDesc() {
+        presenter.onSearchRepositories("yeey");
+
+        presenter.onSortByStarsDesc();
+
+        verify(gitHubService).searchRepositories("yeey", Sorting.STARS, Ordering.DESC, 1, 50);
+    }
+
+    @Test
+    public void onSortByStarsAsc_callsGitHubServiceWithSortingStarsOrderingAsc() {
+        presenter.onSearchRepositories("yeey");
+
+        presenter.onSortByStarsAsc();
+
+        verify(gitHubService).searchRepositories("yeey", Sorting.STARS, Ordering.ASC, 1, 50);
+    }
+
+    @Test
+    public void onSortByForksDesc_callsGitHubServiceWithSortingForksOrderingDesc() {
+        presenter.onSearchRepositories("yeey");
+
+        presenter.onSortByForksDesc();
+
+        verify(gitHubService).searchRepositories("yeey", Sorting.FORKS, Ordering.DESC, 1, 50);
+    }
+
+    @Test
+    public void onSortByForksAsc_callsGitHubServiceWithSortingForksOrderingAsc() {
+        presenter.onSearchRepositories("yeey");
+
+        presenter.onSortByForksAsc();
+
+        verify(gitHubService).searchRepositories("yeey", Sorting.FORKS, Ordering.ASC, 1, 50);
+    }
+
+    @Test
+    public void onSortByStarsDesc_callsGitHubServiceWithSortingUpdatedOrderingDesc() {
+        presenter.onSearchRepositories("yeey");
+
+        presenter.onSortByUpdatedDesc();
+
+        verify(gitHubService).searchRepositories("yeey", Sorting.UPDATED, Ordering.DESC, 1, 50);
+    }
+
+    @Test
+    public void onSortByStarsAsc_callsGitHubServiceWithSortingUpdatedOrderingAsc() {
+        presenter.onSearchRepositories("yeey");
+
+        presenter.onSortByUpdatedAsc();
+
+        verify(gitHubService).searchRepositories("yeey", Sorting.UPDATED, Ordering.ASC, 1, 50);
+    }
+
+    @Test
+    public void onLoadNextPage_shouldLoadMore_showsLoadingMore() throws InterruptedException {
+        presenter.onSearchRepositories("something");
+        sleep(THREAD_SLEEP_MILLIS);
+        reset(view);
+
+        presenter.onLoadNextPage();
+
+        verify(view).showLoadingMore();
+    }
+
+    @Test
+    public void onLoadNextPage_shouldLoadMore_callsGitHubServiceWithCorrectPage() throws InterruptedException {
+        presenter.onSearchRepositories("something");
+        sleep(THREAD_SLEEP_MILLIS);
+        reset(gitHubService);
+        when(gitHubService.searchRepositories(anyString(), any(Sorting.class), any(Ordering.class), anyInt(), anyInt()))
+                .thenReturn(Single.just(testResponse));
+
+        presenter.onLoadNextPage();
+
+        verify(gitHubService).searchRepositories("something", Sorting.NONE, Ordering.NONE, 2, 50);
+
+        presenter.onLoadNextPage();
+
+        verify(gitHubService).searchRepositories("something", Sorting.NONE, Ordering.NONE, 3, 50);
+    }
+
+    @Test
+    public void onLoadNextPage_shouldNotLoadMore_doesNothing() throws InterruptedException {
+        when(testResponse.getTotalCount()).thenReturn(2);
+        presenter.onSearchRepositories("something");
+        sleep(THREAD_SLEEP_MILLIS);
+        reset(view);
+        reset(gitHubService);
+        when(gitHubService.searchRepositories(anyString(), any(Sorting.class), any(Ordering.class), anyInt(), anyInt()))
+                .thenReturn(Single.just(testResponse));
+
+        presenter.onLoadNextPage();
+
+        verify(view, never()).showLoadingMore();
+        verify(gitHubService, never()).searchRepositories(anyString(), any(Sorting.class), any(Ordering.class), anyInt(), anyInt());
+    }
+
+    @Test
+    public void onErrorRefreshClicked_withSearchQueryAndSortByAndPage_repeatsCallToGitHubService() throws InterruptedException {
+        presenter.onSearchRepositories("smhw");
+        sleep(THREAD_SLEEP_MILLIS);
+        presenter.onSortByForksAsc();
+        sleep(THREAD_SLEEP_MILLIS);
+        presenter.onLoadNextPage();
+        sleep(THREAD_SLEEP_MILLIS);
+
+        presenter.onErrorRefreshClicked();
+
+        verify(gitHubService, times(2)).searchRepositories("smhw", Sorting.FORKS, Ordering.ASC, 2, 50);
+    }
 
     private static RepositoriesResponse getTestResponse() {
         final com.evastos.githubrepos.data.model.response.Repository repository1 =
-                mock(com.evastos.githubrepos.data.model.response.Repository .class);
+                mock(com.evastos.githubrepos.data.model.response.Repository.class);
         when(repository1.getName()).thenReturn("RepositoryName1");
         final User owner1 = mock(User.class);
         when(owner1.getLogin()).thenReturn("OwnerName1");
@@ -407,7 +425,7 @@ public class SearchPresenterTest {
         when(repository1.getOpenIssuesCount()).thenReturn(9000);
 
         final com.evastos.githubrepos.data.model.response.Repository repository2 =
-                mock(com.evastos.githubrepos.data.model.response.Repository .class);
+                mock(com.evastos.githubrepos.data.model.response.Repository.class);
         when(repository2.getName()).thenReturn("RepositoryName2");
         final User owner2 = mock(User.class);
         when(owner2.getLogin()).thenReturn("OwnerName2");
@@ -423,8 +441,8 @@ public class SearchPresenterTest {
         return response;
     }
 
-    private List<Repository> getTestRepositories() {
-        final List<Repository> repositories = new ArrayList<>();
+    private ArrayList<Repository> getTestRepositories() {
+        final ArrayList<Repository> repositories = new ArrayList<>();
         for (com.evastos.githubrepos.data.model.response.Repository item : testResponse.getItems()) {
             repositories.add(new Repository(item));
         }

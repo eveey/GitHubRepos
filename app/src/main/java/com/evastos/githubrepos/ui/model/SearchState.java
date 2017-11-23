@@ -54,4 +54,28 @@ public class SearchState {
     public int getPage() {
         return page;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SearchState that = (SearchState) o;
+
+        if (page != that.page) return false;
+        if (repositories != null ? !repositories.equals(that.repositories) : that.repositories != null)
+            return false;
+        if (searchQuery != null ? !searchQuery.equals(that.searchQuery) : that.searchQuery != null)
+            return false;
+        return sortBy == that.sortBy;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = repositories != null ? repositories.hashCode() : 0;
+        result = 31 * result + (searchQuery != null ? searchQuery.hashCode() : 0);
+        result = 31 * result + sortBy.hashCode();
+        result = 31 * result + page;
+        return result;
+    }
 }

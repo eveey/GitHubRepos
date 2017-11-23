@@ -98,4 +98,30 @@ public class Repository implements Parcelable {
         dest.writeInt(forksCount);
         dest.writeInt(issuesCount);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Repository that = (Repository) o;
+
+        if (watchersCount != that.watchersCount) return false;
+        if (forksCount != that.forksCount) return false;
+        if (issuesCount != that.issuesCount) return false;
+        if (!repositoryName.equals(that.repositoryName)) return false;
+        if (!ownerAvatarUrl.equals(that.ownerAvatarUrl)) return false;
+        return ownerName.equals(that.ownerName);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = repositoryName.hashCode();
+        result = 31 * result + ownerAvatarUrl.hashCode();
+        result = 31 * result + ownerName.hashCode();
+        result = 31 * result + watchersCount;
+        result = 31 * result + forksCount;
+        result = 31 * result + issuesCount;
+        return result;
+    }
 }

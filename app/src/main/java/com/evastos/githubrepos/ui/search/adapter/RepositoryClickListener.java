@@ -10,12 +10,12 @@ import android.support.annotation.NonNull;
 import com.evastos.githubrepos.ui.model.Repository;
 
 /**
- * Listener for user clicks on {@link Repository}
+ * Listener for user clicks on {@link Repository} list item
  */
 public interface RepositoryClickListener {
 
     /**
-     * When user clicks on repository item
+     * When user clicks on repository list item
      *
      * @param repository the repository
      */
