@@ -229,7 +229,8 @@ public class SearchFragment extends BaseFragment implements SearchContract.View 
 
     @Override
     public void showRepositories(@NonNull final List<Repository> repositories) {
-        repositoryAdapter = new RepositoryAdapter(getActivity(), repositories, this);
+        repositoryAdapter = new RepositoryAdapter(getActivity(), repositories);
+        repositoryAdapter.setRepositoryClickListener(this);
         repositoriesRecyclerView.setAdapter(repositoryAdapter);
     }
 

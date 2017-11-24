@@ -37,7 +37,7 @@
             android:layout_height="0dip"
             android:layout_weight="1"
             android:scrollbars="vertical"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
         <include layout="@layout/progress_bar_horizontal" />
 

@@ -1,14 +1,16 @@
 <resources>
     <dimen name="textSizeXSmall">14sp</dimen>
     <dimen name="textSizeSmall">16sp</dimen>
-    <dimen name="textSizeMedium">20sp</dimen>
+    <!--<dimen name="textSizeMedium">20sp</dimen>-->
     <dimen name="textSizeLarge">24sp</dimen>
-    <dimen name="textSizeXLarge">32sp</dimen>
+    <!--<dimen name="textSizeXLarge">32sp</dimen>-->
 
     <dimen name="spacing1x">8dp</dimen>
     <dimen name="spacing2x">16dp</dimen>
     <dimen name="spacing3x">24dp</dimen>
 
-    <dimen name="repository_item_owner_thumbnail_size">64dp</dimen>
+    <dimen name="repository_item_owner_image_size">64dp</dimen>
     <dimen name="repository_item_name_width">100dp</dimen>
+
+    <dimen name="repository_detail_owner_image_size">100dp</dimen>
 </resources>

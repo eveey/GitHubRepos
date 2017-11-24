@@ -34,8 +34,8 @@
 
             <ImageView
                 android:id="@+id/fragment_repository_detail_image_view_owner"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="@dimen/repository_detail_owner_image_size"
+                android:layout_height="@dimen/repository_detail_owner_image_size"
                 android:background="@null"
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"

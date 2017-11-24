@@ -19,8 +19,8 @@
 
     <ImageView
         android:id="@+id/recycler_view_item_repository_image_view_owner"
-        android:layout_width="@dimen/repository_item_owner_thumbnail_size"
-        android:layout_height="@dimen/repository_item_owner_thumbnail_size"
+        android:layout_width="@dimen/repository_item_owner_image_size"
+        android:layout_height="@dimen/repository_item_owner_image_size"
         android:background="@null"
         android:contentDescription="@null"
         android:scaleType="centerInside"

@@ -23,6 +23,7 @@ import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.concurrent.Callable;
 
 import io.reactivex.Scheduler;
@@ -423,6 +424,13 @@ public class SearchPresenterTest {
         when(repository1.getWatchersCount()).thenReturn(23);
         when(repository1.getForksCount()).thenReturn(5767);
         when(repository1.getOpenIssuesCount()).thenReturn(9000);
+        when(repository1.getStargazersCount()).thenReturn(44);
+        when(repository1.getFullName()).thenReturn("FullName1");
+        when(repository1.getHtmlUrl()).thenReturn("HtmlUrl1");
+        when(repository1.getLanguage()).thenReturn("Language1");
+        when(repository1.getUpdatedAt()).thenReturn(new Date());
+        when(repository1.getCreatedAt()).thenReturn(new Date());
+        when(repository1.getDescription()).thenReturn("Description1");
 
         final com.evastos.githubrepos.data.model.response.Repository repository2 =
                 mock(com.evastos.githubrepos.data.model.response.Repository.class);
@@ -434,6 +442,14 @@ public class SearchPresenterTest {
         when(repository2.getWatchersCount()).thenReturn(656335);
         when(repository2.getForksCount()).thenReturn(111);
         when(repository2.getOpenIssuesCount()).thenReturn(80533);
+        when(repository2.getStargazersCount()).thenReturn(98);
+        when(repository2.getFullName()).thenReturn("FullName2");
+        when(repository2.getHtmlUrl()).thenReturn("HtmlUrl2");
+        when(repository2.getLanguage()).thenReturn("Language2");
+        when(repository2.getUpdatedAt()).thenReturn(new Date());
+        when(repository2.getCreatedAt()).thenReturn(new Date());
+        when(repository2.getDescription()).thenReturn("Description2");
+        when(repository2.getDescription()).thenReturn("Description2");
 
         final RepositoriesResponse response = mock(RepositoriesResponse.class);
         when(response.getTotalCount()).thenReturn(120);

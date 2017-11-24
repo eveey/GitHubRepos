@@ -74,34 +74,24 @@ public class RepositoryDetailFragment extends Fragment implements RepositoryDeta
     @BindView(R.id.fragment_repository_detail_text_view_stargazers)
     TextView stargazersTextView;
 
-    @NonNull
     private String ownerFormat;
 
-    @NonNull
     private String watchersFormat;
 
-    @NonNull
     private String forksFormat;
 
-    @NonNull
     private String issuesFormat;
 
-    @NonNull
     private String stargazersFormat;
 
-    @NonNull
     private String languageFormat;
 
-    @NonNull
     private String dateCreatedFormat;
 
-    @NonNull
     private String dateUpdatedFormat;
 
-    @NonNull
     private RequestManager imageManager;
 
-    @NonNull
     private RequestOptions imageOptions;
 
     private RepositoryDetailContract.Presenter presenter;
@@ -208,7 +198,7 @@ public class RepositoryDetailFragment extends Fragment implements RepositoryDeta
 
     @Override
     public void showLanguage(@Nullable final String language) {
-        languageTextView.setText(String.format(languageFormat, language == null ? "-" : language));
+        languageTextView.setText(String.format(languageFormat, language != null ? language : "-"));
     }
 
     @Override

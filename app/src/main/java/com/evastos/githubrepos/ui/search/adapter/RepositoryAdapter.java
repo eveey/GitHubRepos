@@ -8,6 +8,7 @@ package com.evastos.githubrepos.ui.search.adapter;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,16 +59,14 @@ public class RepositoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @NonNull
     private final RequestOptions imageOptions;
 
-    @NonNull
-    private final RepositoryClickListener repositoryClickListener;
+    @Nullable
+    private RepositoryClickListener repositoryClickListener;
 
     private boolean isLoading = false;
 
     public RepositoryAdapter(@NonNull final Context context,
-                             @NonNull final List<Repository> repositories,
-                             @NonNull final RepositoryClickListener repositoryClickListener) {
+                             @NonNull final List<Repository> repositories) {
         this.repositories = new ArrayList<>(repositories);
-        this.repositoryClickListener = repositoryClickListener;
         layoutInflater = LayoutInflater.from(context);
         imageManager = Glide.with(context);
         placeholderOwnerImage = context.getResources().getDrawable(R.drawable.ic_account_circle_black_36px);
@@ -133,6 +132,15 @@ public class RepositoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         notifyDataSetChanged();
     }
 
+    /**
+     * Sets repository click listener
+     *
+     * @param repositoryClickListener the listener
+     */
+    public void setRepositoryClickListener(@NonNull final RepositoryClickListener repositoryClickListener) {
+        this.repositoryClickListener = repositoryClickListener;
+    }
+
     private class RepositoryViewHolder extends RecyclerView.ViewHolder {
 
         @NonNull
@@ -177,7 +185,9 @@ public class RepositoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             clickableView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    repositoryClickListener.onClick(repository);
+                    if (repositoryClickListener != null) {
+                        repositoryClickListener.onClick(repository);
+                    }
                 }
             });
             imageManager
