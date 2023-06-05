@@ -1,2 +1,2 @@
-# GithubRepos
-Github repositories sample app
+# GitHubRepos
+GitHub repositories sample app
